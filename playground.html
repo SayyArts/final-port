@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Playground</title>
+  <link rel="stylesheet" href="playground.css" />
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-left">
+    <span class="nav-reveal-wrap">
+      <span class="nav-reveal-inner">
+        <span id="navTime"></span> · Currently in Montreal
+      </span>
+    </span>
+  </div>
+  <div class="nav-links">
+    <a href="index.html">
+      <span class="nav-reveal-wrap">
+        <span class="nav-reveal-inner">
+          <span class="text-inner">Home,</span>
+          <span class="text-inner">Home,</span>
+        </span>
+      </span>
+    </a>
+    <a href="work.html">
+      <span class="nav-reveal-wrap">
+        <span class="nav-reveal-inner">
+          <span class="text-inner">Work,</span>
+          <span class="text-inner">Work,</span>
+        </span>
+      </span>
+    </a>
+    <a href="playground.html">
+      <span class="nav-reveal-wrap">
+        <span class="nav-reveal-inner">
+          <span class="text-inner">Playground,</span>
+          <span class="text-inner">Playground,</span>
+        </span>
+      </span>
+    </a>
+    <a href="about.html">
+      <span class="nav-reveal-wrap">
+        <span class="nav-reveal-inner">
+          <span class="text-inner">About,</span>
+          <span class="text-inner">About,</span>
+        </span>
+      </span>
+    </a>
+  </div>
+  <div class="nav-cta-wrap">
+    <button class="nav-cta">
+      <span class="nav-cta-mask">
+        <span class="nav-cta-inner">
+          <span class="text-inner">CONTACT ME</span>
+          <span class="text-inner">CONTACT ME</span>
+        </span>
+      </span>
+    </button>
+  </div>
+</nav>
+
+<section id="playground">
+  <div class="pg-layout">
+    <div class="pg-names-wrap">
+      <div class="pg-fade pg-fade-top"></div>
+      <div class="pg-names" id="pgNames"></div>
+      <div class="pg-fade pg-fade-bottom"></div>
+    </div>
+    <div class="pg-images" id="pgImages">
+      <div class="pg-img-slot active" data-index="0"><div class="pg-img-curtain" style="background:#7B61FF;"></div></div>
+      <div class="pg-img-slot" data-index="1"><div class="pg-img-curtain" style="background:#FF6B6B;"></div></div>
+      <div class="pg-img-slot" data-index="2"><div class="pg-img-curtain" style="background:#43D9A2;"></div></div>
+      <div class="pg-img-slot" data-index="3"><div class="pg-img-curtain" style="background:#F5A623;"></div></div>
+      <div class="pg-img-slot" data-index="4"><div class="pg-img-curtain" style="background:#4ECDC4;"></div></div>
+      <div class="pg-img-slot" data-index="5"><div class="pg-img-curtain" style="background:#C0392B;"></div></div>
+      <div class="pg-img-slot" data-index="6"><div class="pg-img-curtain" style="background:#8E44AD;"></div></div>
+      <div class="pg-img-slot" data-index="7"><div class="pg-img-curtain" style="background:#2ECC71;"></div></div>
+      <div class="pg-img-slot" data-index="8"><div class="pg-img-curtain" style="background:#E67E22;"></div></div>
+      <div class="pg-img-slot" data-index="9"><div class="pg-img-curtain" style="background:#1ABC9C;"></div></div>
+    </div>
+  </div>
+  <div class="pg-scroll-hint">(keep scrolling)</div>
+</section>
+
+<script src="playground.js"></script>
+</body>
+</html>

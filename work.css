@@ -1,0 +1,192 @@
+html, body {
+  height: 100%;
+  max-height: 100vh;
+  overflow: hidden !important;
+  overscroll-behavior: none;
+}
+
+/* ─── WORKS PAGE LAYOUT ─── */
+.works-page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  padding: 2.31vw;
+  justify-content: space-between;
+  overflow: visible;
+  position: relative;
+}
+
+/* ─── CAROUSEL AREA ─── */
+.works-carousel-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
+  margin: 0 -2.31vw;
+  padding: 0 2.31vw;
+}
+
+.works-track-wrapper {
+  overflow: hidden;
+  width: calc(100% + 4.63vw);
+  margin-left: -2.31vw;
+  padding-left: 2.31vw;
+  transform: translateY(-3vw);
+}
+
+.works-track {
+  display: flex;
+  gap: 1.157vw;
+  will-change: transform;
+  cursor: default;
+  user-select: none;
+}
+
+.works-track:active {
+  cursor: grabbing;
+}
+
+.work-slide {
+  flex-shrink: 0;
+}
+
+.work-thumb-wrapper {
+  overflow: hidden;
+  border-radius: 0.694vw;
+}
+
+.work-thumb {
+  width: 34.375vw;
+  height: 34.375vw;
+  border-radius: 0.694vw;
+  flex-shrink: 0;
+  pointer-events: none;
+  transform: translateY(100%);
+  display: block;
+  object-fit: cover;
+}
+
+/* ─── SLIDE NAME ─── */
+.work-slide-name-wrapper {
+  overflow: hidden;
+}
+
+.work-slide-name {
+  margin-top: 0.694vw;
+  font-size: clamp(14px, 1.157vw, 20px);
+  font-weight: 480;
+  color: #000000;
+  display: block;
+  transform: translateY(100%);
+}
+
+/* ─── BOTTOM BAR ─── */
+.works-bottom {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding-top: 0.926vw;
+}
+
+.works-big-title {
+  font-size: clamp(60px, 7.407vw, 160px);
+  font-weight: 800;
+  line-height: 1;
+  color: #090909;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+/* ─── BOTTOM CENTER ─── */
+.works-bottom-center {
+  display: flex;
+  flex-direction: column;
+  gap: 0.463vw;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.works-progress-row {
+  display: flex;
+  align-items: baseline;
+  gap: 1.389vw;
+}
+
+.works-scroll-label {
+  font-size: clamp(12px, 1.157vw, 20px);
+  font-weight: 480;
+  color: #1e1e1e;
+}
+
+.works-progress {
+  font-size: clamp(12px, 1.157vw, 20px);
+  font-weight: 480;
+  color: #1e1e1e;
+}
+
+.works-progress-bar-track {
+  width: 112%;
+  height: 1.5px;
+  background: rgba(9, 9, 9, 0.15);
+  position: relative;
+  overflow: hidden;
+}
+
+.works-progress-bar-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 0%;
+  background: #1e1e1e;
+}
+
+/* ─── BOTTOM RIGHT ─── */
+.works-bottom-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.116vw;
+  font-size: clamp(12px, 1.157vw, 20px);
+  font-weight: 480;
+  color: #1e1e1e;
+}
+
+/* ─── PROGRESS NUMBER ─── */
+#worksProgressNum {
+  display: inline-block;
+  width: 2ch;
+  margin-left: -8px;
+  white-space: nowrap;
+}
+
+.paren {
+  margin: 0 -3px;
+}
+
+.progress-inner {
+  display: inline-flex;
+  width: 52px;
+  justify-content: center;
+}
+
+.works-big-title-wrapper,
+.works-bottom-center-wrapper,
+.works-bottom-right-wrapper {
+  overflow: hidden;
+}
+
+.works-bottom-center-wrapper {
+  overflow: hidden;
+  padding-right: 2.31vw;
+  margin-right: -2.31vw;
+}
+
+.work-current-name {
+  color: #FAFAFA;
+}
+
+.works-name-bar {
+  display: none;
+}

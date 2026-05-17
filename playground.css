@@ -1,0 +1,257 @@
+@font-face {
+  font-family: 'Saans';
+  src: url('fonts/SaansCollectionVF-Trial.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+}
+
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  overscroll-behavior-y: none;
+  background-color: #090909;
+  color: #FAFAFA;
+  font-family: 'Saans', sans-serif;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ─── NAVBAR ─── */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 40px;
+  position: relative;
+  z-index: 100;
+}
+
+.nav-left {
+  display: flex;
+  gap: clamp(12px, 1.5vw, 24px);
+  font-size: clamp(13px, 1.15vw, 28px);
+  font-weight: 480;
+  color: #FAFAFA;
+}
+
+.nav-links {
+  display: flex;
+  gap: clamp(8px, 1vw, 12px);
+  font-weight: 480;
+  font-size: clamp(13px, 1.15vw, 28px);
+  margin-left: clamp(12px, 10vw, 160px);
+}
+
+.nav-links a {
+  font-size: clamp(13px, 1.15vw, 28px);
+  text-decoration: none;
+  color: #FAFAFA;
+  display: inline-block;
+}
+
+/* ─── NAV REVEAL WRAP ─── */
+.nav-reveal-wrap {
+  display: inline-flex;
+  flex-direction: column;
+  overflow: hidden;
+  vertical-align: middle;
+  height: 1.3em; /* extra room for descenders */
+}
+
+.nav-reveal-inner {
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+/* ─── NAV LINK HOVER ─── */
+.nav-links a .nav-reveal-wrap {
+  height: 1.3em;
+}
+
+.nav-links a .text-inner {
+  display: block;
+  flex-shrink: 0;
+  height: 1.3em;
+  line-height: 1.3;
+  transition: transform 0.35s cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+.nav-links a:hover .text-inner {
+  transform: translateY(-100%);
+}
+
+/* ─── CTA ─── */
+.nav-cta {
+  position: relative;
+  background: #FFFFFF;
+  color: #090909;
+  border: none;
+  padding: clamp(12px, 0.9vw, 24px) clamp(14px, 1.1vw, 30px);
+  border-radius: 999px;
+  font-family: 'Saans', sans-serif;
+  font-size: clamp(13px, 1.15vw, 28px);
+  font-weight: 480;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  overflow: hidden; /* hides text during reveal */
+}
+
+.nav-cta-mask {
+  display: inline-flex;
+  overflow: hidden;
+  height: 1.3em;
+  vertical-align: middle;
+}
+
+.nav-cta-inner {
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.45s cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+.nav-cta:hover .nav-cta-inner {
+  transform: translateY(-50%);
+}
+
+.nav-cta .text-inner {
+  display: block;
+  height: 1.3em;
+  line-height: 1.3;
+  flex-shrink: 0;
+}
+
+/* ─── PLAYGROUND ─── */
+#playground {
+  position: relative;
+  height: calc(100vh - 64px);
+  overflow: hidden;
+}
+
+.pg-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  height: 100%;
+  padding: 0 40px;
+  gap: clamp(40px, 5vw, 80px);
+}
+
+/* ─── NAMES WRAP ─── */
+.pg-names-wrap {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ─── NAMES ─── */
+.pg-names {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  will-change: transform;
+}
+
+/* ─── ITEM ─── */
+.pg-item {
+  overflow: hidden;
+  font-size: clamp(40px, 4.156vw, 112px);
+  font-weight: 700;
+  color: #575757;
+  cursor: default;
+  white-space: nowrap;
+  line-height: 1.15;
+  text-transform: uppercase;
+  transition: color 0.2s ease;
+  flex-shrink: 0;
+}
+
+.pg-item.active {
+  color: #FAFAFA;
+}
+
+.pg-item-inner {
+  display: block;
+  padding: clamp(10px, 1.4vw, 22px) 0;
+}
+
+/* ─── FADES ─── */
+.pg-fade {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: clamp(120px, 18vw, 280px);
+  pointer-events: none;
+  z-index: 10;
+}
+
+.pg-fade-top {
+  top: 0;
+  background: linear-gradient(to bottom, #090909 0%, transparent 100%);
+}
+
+.pg-fade-bottom {
+  bottom: 0;
+  background: linear-gradient(to top, #090909 0%, transparent 100%);
+}
+
+/* ─── IMAGES ─── */
+.pg-images {
+  position: relative;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pg-img-slot {
+  position: absolute;
+  width: 29.17vw;
+  height: 34.72vw;
+  border-radius: 0.2vw;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 0.05s ease;
+  pointer-events: none;
+}
+
+.pg-img-slot.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ─── CURTAIN ─── */
+.pg-img-curtain {
+  position: absolute;
+  inset: 0;
+  border-radius: 0.2vw;
+  pointer-events: none;
+}
+
+.pg-img-slot img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 1vw;
+  display: block;
+}
+
+/* ─── SCROLL HINT ─── */
+.pg-scroll-hint {
+  position: absolute;
+  bottom: 24px;
+  right: 40px;
+  font-size: clamp(14px, 1.15vw, 28px);
+  padding: 0 clamp(16px, 2.78vw, 40px) clamp(16px, 2vw, 40px);
+  color: #7b7b7b;
+  opacity: 0.55;
+  z-index: 100;
+  font-weight: 480;
+}
+
+.nav-cta-wrap {
+  overflow: hidden;
+}
