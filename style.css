@@ -18,6 +18,7 @@ html, body {
   font-family: 'Saans', sans-serif;
   min-height: 100vh;
   max-width: 100%;
+  scrollbar-gutter: stable; /* ADD THIS */
 }
 
 /* ─── NAVBAR ─── */
