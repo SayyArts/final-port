@@ -24,6 +24,7 @@ html, body {
   min-height: 100vh;
   max-width: 100%;
   scrollbar-gutter: stable; /* ADD THIS */
+  overflow-x: hidden;
 }
 
 /* ─── NAVBAR ─── */
