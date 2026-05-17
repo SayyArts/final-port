@@ -6,11 +6,6 @@
 }
 
 * {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-* {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -23,8 +18,6 @@ html, body {
   font-family: 'Saans', sans-serif;
   min-height: 100vh;
   max-width: 100%;
-  scrollbar-gutter: stable; /* ADD THIS */
-  overflow-x: hidden;
 }
 
 /* ─── NAVBAR ─── */
