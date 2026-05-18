@@ -81,7 +81,9 @@
   // ─── LOOP ───
   function loop() {
     const diff = targetX - currentX;
-    currentX = Math.abs(diff) > 0.05 ? currentX + diff * 0.12 : targetX;
+// Replace your lerp threshold with this tighter snap
+currentX = Math.abs(diff) > 0.01 ? currentX + diff * 0.12 : targetX;
+
 
     if (currentX < -LOOP_WIDTH) { currentX += LOOP_WIDTH; targetX += LOOP_WIDTH; }
     if (currentX > 0)           { currentX -= LOOP_WIDTH; targetX -= LOOP_WIDTH; }
