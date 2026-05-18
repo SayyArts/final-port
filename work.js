@@ -20,7 +20,7 @@
   const titleEl      = document.querySelector('.works-big-title');
   if (trackWrapper && titleEl) {
     const titleH = titleEl.getBoundingClientRect().height;
-    trackWrapper.style.transform = `translateY(-${titleH * 0.2}px)`;
+    trackWrapper.style.transform = `translateY(-${titleH * 0.0}px)`;
   }
 
   // ─── CONSTANTS ───
@@ -153,4 +153,5 @@
 
   requestAnimationFrame(loop);
 })();
+
 
