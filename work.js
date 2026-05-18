@@ -23,14 +23,21 @@
     trackWrapper.style.transform = `translateY(-${titleH * 0.0}px)`;
   }
 
-  // ─── CONSTANTS ───
-  const SLIDE_W    = 594;
-  const GAP        = 20;
-  const STEP       = SLIDE_W + GAP;
+  // ─── CONSTANTS (measured at runtime) ───
   const realSlides = Array.from(track.querySelectorAll('.work-slide:not(.clone)'));
   const TOTAL      = realSlides.length;
-  const LOOP_WIDTH = STEP * TOTAL;
   const names      = realSlides.map(s => s.dataset.name);
+
+  function getMeasurements() {
+    const firstSlide = realSlides[0];
+    const SLIDE_W    = firstSlide.getBoundingClientRect().width;
+    const GAP        = parseFloat(getComputedStyle(track).gap) || 0;
+    const STEP       = SLIDE_W + GAP;
+    const LOOP_WIDTH = STEP * TOTAL;
+    return { SLIDE_W, GAP, STEP, LOOP_WIDTH };
+  }
+
+  let { STEP, LOOP_WIDTH } = getMeasurements();
 
   // ─── STATE ───
   let current    = 0;
@@ -39,6 +46,13 @@
   let isDragging = false;
   let lastX      = 0;
   let velocity   = 0;
+
+  // ─── RESIZE ───
+  window.addEventListener('resize', () => {
+    const m = getMeasurements();
+    STEP       = m.STEP;
+    LOOP_WIDTH = m.LOOP_WIDTH;
+  });
 
   // ─── HELPERS ───
   function getIndex() {
@@ -67,7 +81,7 @@
   // ─── LOOP ───
   function loop() {
     const diff = targetX - currentX;
-    currentX = Math.abs(diff) > 0.1 ? currentX + diff * 0.12 : targetX;
+    currentX = Math.abs(diff) > 0.05 ? currentX + diff * 0.12 : targetX;
 
     if (currentX < -LOOP_WIDTH) { currentX += LOOP_WIDTH; targetX += LOOP_WIDTH; }
     if (currentX > 0)           { currentX -= LOOP_WIDTH; targetX -= LOOP_WIDTH; }
@@ -153,5 +167,6 @@
 
   requestAnimationFrame(loop);
 })();
+
 
 
