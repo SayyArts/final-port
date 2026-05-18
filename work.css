@@ -56,8 +56,8 @@ html, body {
 }
 
 .work-thumb {
-  width: 34.375vw;
-  height: min(34.375vw, 55vh); /* never taller than 55% of available height */
+  width: min(34.375vw, 55vh);
+  height: min(34.375vw, 55vh);
   border-radius: 0.694vw;
   flex-shrink: 0;
   pointer-events: none;
