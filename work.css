@@ -32,7 +32,6 @@ html, body {
   width: calc(100% + 4.63vw);
   margin-left: -2.31vw;
   padding-left: 2.31vw;
-  transform: translateY(-3vw);
 }
 
 .works-track {
