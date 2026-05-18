@@ -7,11 +7,11 @@ html, body {
 
 /* ─── WORKS PAGE LAYOUT ─── */
 .works-page {
-  display: flex;
+    display: flex;
   flex-direction: column;
-  height: 100dvh;
+  height: calc(100dvh - var(--nav-height));
   padding: 2.31vw;
-  justify-content: space-between;
+  /* remove justify-content: space-between */
   overflow: visible;
   position: relative;
 }
@@ -86,6 +86,7 @@ html, body {
   align-items: flex-end;
   justify-content: space-between;
   padding-top: 0.926vw;
+  margin-top: auto; /* this now controls the gap naturally */
 }
 
 .works-big-title {
@@ -189,3 +190,4 @@ html, body {
 .works-name-bar {
   display: none;
 }
+
