@@ -40,6 +40,7 @@ html, body {
   will-change: transform;
   cursor: default;
   user-select: none;
+  transform: translateZ(0);
 }
 
 .works-track:active {
