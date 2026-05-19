@@ -11,7 +11,7 @@
 
   // ─── DATA ───
   const projects = [
-    { name: 'Motion Reel' },
+    { name: '2D Animation' },
     { name: '3D Typography' },
     { name: 'Brand System' },
     { name: 'UI Experiments' },
@@ -19,7 +19,7 @@
     { name: 'Poster Series' },
     { name: 'Generative Art' },
     { name: 'Type In Motion' },
-    { name: 'Grid Studies' },
+    { name: 'Displates' },
     { name: 'Visual Essays' },
   ];
 
