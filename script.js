@@ -128,41 +128,61 @@ function observeAndReveal(el, threshold = 0.25, stagger = 100) {
 // ============================================
 function initHeroCard() {
   const heroCard = document.querySelector('.hero-card');
-  const spacer = document.querySelector('.scroll-spacer');
-  const navbar = document.querySelector('.navbar');
+  const spacer   = document.querySelector('.scroll-spacer');
+  const navbar   = document.querySelector('.navbar');
   const heroName = document.querySelector('.hero-name');
   if (!heroCard) return;
 
-  let START_Y = 0;
-  let SCROLL_DISTANCE = window.innerHeight * 1;
+  let START_Y           = 0;
+  let SCROLL_DISTANCE   = window.innerHeight;
+  let focusTop          = Infinity;
   const MAX_SCALE_DELTA = 2.64;
-  const MAX_DRIFT_Y = -30;
+  const MAX_DRIFT_Y     = -30;
+  const GAP_BIAS        = -5;
 
   function computeStartY() {
-    const navBottom = navbar ? navbar.getBoundingClientRect().bottom : 0;
-    const nameTop = heroName ? heroName.getBoundingClientRect().top : window.innerHeight * 0.5;
+    const navBottom  = navbar   ? navbar.getBoundingClientRect().bottom  : 0;
+    const nameTop    = heroName ? heroName.getBoundingClientRect().top   : window.innerHeight * 0.5;
     const cardHeight = heroCard.offsetHeight;
-    // Centers card in the space between navbar bottom and hero name top
-    // GAP_BIAS: 0 = perfectly centered, positive = push card down, negative = push card up
-    const GAP_BIAS = -5;
     START_Y = (navBottom + nameTop - cardHeight) / 2 + GAP_BIAS;
   }
 
-function setSpacerHeight() {
-  if (!spacer) return;
-  spacer.style.height = `${SCROLL_DISTANCE}px`;
-}
+  function computeFocusTop() {
+    const fs = document.querySelector('.focus-section');
+    focusTop = fs ? fs.getBoundingClientRect().top + lenisScrollY : Infinity;
+  }
 
-  window.addEventListener('resize', () => {
-    SCROLL_DISTANCE = window.innerHeight * 1;
+  // ← THE FIX: SCROLL_DISTANCE derived from actual DOM gap, not viewport height
+  function computeScrollDistance() {
+    const fs = document.querySelector('.focus-section');
+    if (!fs) {
+      SCROLL_DISTANCE = window.innerHeight;
+      return;
+    }
+    const fsTop = fs.getBoundingClientRect().top + lenisScrollY;
+    // Card locks 120px before it would overlap the focus section
+    SCROLL_DISTANCE = fsTop - START_Y - heroCard.offsetHeight - 120;
+    // Safety floor so it never goes negative or too short
+    SCROLL_DISTANCE = Math.max(SCROLL_DISTANCE, window.innerHeight * 0.4);
+  }
+
+  function setSpacerHeight() {
+    if (spacer) spacer.style.height = `${SCROLL_DISTANCE}px`;
+  }
+
+  function onResize() {
     computeStartY();
-    setSpacerHeight();
+    computeScrollDistance();
     computeFocusTop();
+    setSpacerHeight();
     heroCard.style.top = `${START_Y}px`;
-  });
+  }
+
+  window.addEventListener('resize', onResize);
 
   document.body.appendChild(heroCard);
   computeStartY();
+  computeScrollDistance();
 
   heroCard.style.cssText += `
     position: fixed;
@@ -176,31 +196,25 @@ function setSpacerHeight() {
     -webkit-clip-path: inset(100% 0% 0% 0%);
   `;
 
-  let mouseX = window.innerWidth / 2;
-  let currentOffsetX = 0;
+  let mouseX            = window.innerWidth / 2;
+  let currentOffsetX    = 0;
   let lockedAbsoluteTop = null;
-  let focusTop = Infinity;
-  let revealProgress = 0;
-  let revealStart = null;
-  const REVEAL_DELAY = 100;
+  let revealProgress    = 0;
+  let revealStart       = null;
+  const REVEAL_DELAY    = 100;
   const REVEAL_DURATION = 700;
 
   let heroVisible = true;
-  const heroObserver = new IntersectionObserver(([e]) => {
+  new IntersectionObserver(([e]) => {
     heroVisible = e.isIntersecting;
-  });
-  heroObserver.observe(heroCard);
-
-  function computeFocusTop() {
-    const fs = document.querySelector('.focus-section');
-    focusTop = fs ? fs.getBoundingClientRect().top + lenisScrollY : Infinity;
-  }
+  }).observe(heroCard);
 
   computeFocusTop();
   setSpacerHeight();
 
   window.addEventListener('load', () => {
     computeStartY();
+    computeScrollDistance();
     computeFocusTop();
     setSpacerHeight();
     heroCard.style.top = `${START_Y}px`;
@@ -209,31 +223,28 @@ function setSpacerHeight() {
   document.addEventListener('mousemove', (e) => { mouseX = e.clientX; });
 
   function animate(now) {
-    if (!heroVisible) {
-      requestAnimationFrame(animate);
-      return;
-    }
+    if (!heroVisible) { requestAnimationFrame(animate); return; }
 
     if (revealStart === null) revealStart = now;
     const elapsed = now - revealStart - REVEAL_DELAY;
     if (elapsed > 0) revealProgress = Math.min(elapsed / REVEAL_DURATION, 1);
     const easedReveal = 1 - Math.pow(1 - revealProgress, 4);
 
-    const progress = Math.min(lenisScrollY / SCROLL_DISTANCE, 1);
-    const scale = 1 + progress * MAX_SCALE_DELTA;
-    const topY = START_Y + progress * MAX_DRIFT_Y;
-    const pull = Math.pow(progress, 3);
-    const centerX = window.innerWidth / 2;
-    const targetX = (mouseX - centerX) * 0.7 * (1 - pull);
-    currentOffsetX += (targetX - currentOffsetX) * 0.05;
+    const progress   = Math.min(lenisScrollY / SCROLL_DISTANCE, 1);
+    const scale      = 1 + progress * MAX_SCALE_DELTA;
+    const topY       = START_Y + progress * MAX_DRIFT_Y;
+    const pull       = Math.pow(progress, 3);
+    const centerX    = window.innerWidth / 2;
+    const targetOffX = (mouseX - centerX) * 0.7 * (1 - pull);
+    currentOffsetX  += (targetOffX - currentOffsetX) * 0.05;
 
     const focusFade = lenisScrollY > focusTop - 100 ? 0 : 1;
-    heroCard.style.opacity = focusFade;
+    heroCard.style.opacity       = focusFade;
     heroCard.style.pointerEvents = focusFade === 0 ? 'none' : '';
 
     const maskTop = (1 - easedReveal) * 100;
     const clip = `inset(${maskTop}% 0% 0% 0%)`;
-    heroCard.style.clipPath = clip;
+    heroCard.style.clipPath       = clip;
     heroCard.style.webkitClipPath = clip;
 
     if (progress >= 1) {
@@ -241,11 +252,11 @@ function setSpacerHeight() {
         lockedAbsoluteTop = heroCard.getBoundingClientRect().top + lenisScrollY;
       }
       heroCard.style.position = 'absolute';
-      heroCard.style.top = `${lockedAbsoluteTop}px`;
+      heroCard.style.top      = `${lockedAbsoluteTop}px`;
     } else {
-      lockedAbsoluteTop = null;
+      lockedAbsoluteTop       = null;
       heroCard.style.position = 'fixed';
-      heroCard.style.top = `${topY}px`;
+      heroCard.style.top      = `${topY}px`;
     }
 
     heroCard.style.transform = `translateX(calc(-50% + ${currentOffsetX}px)) scale(${scale})`;
