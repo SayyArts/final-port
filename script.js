@@ -11,6 +11,17 @@ const forceTop = () => {
 forceTop();
 
 // ============================================
+// VIEWPORT HEIGHT UTILITY
+// ============================================
+function setVH() {
+  const vh = window.innerHeight * 0.01;
+  document.documentElement.style.setProperty('--vh', `${vh}px`);
+}
+setVH();
+window.addEventListener('resize', setVH);
+window.visualViewport?.addEventListener('resize', setVH);
+
+// ============================================
 // GSAP + LENIS
 // ============================================
 gsap.registerPlugin(ScrollTrigger);
@@ -138,12 +149,12 @@ function initHeroCard() {
   let focusTop          = Infinity;
   const MAX_SCALE_DELTA = 2.64;
   const MAX_DRIFT_Y     = -30;
-  const GAP_BIAS        = -5;
 
   function computeStartY() {
     const navBottom  = navbar   ? navbar.getBoundingClientRect().bottom  : 0;
     const nameTop    = heroName ? heroName.getBoundingClientRect().top   : window.innerHeight * 0.5;
     const cardHeight = heroCard.offsetHeight;
+    const GAP_BIAS   = -5;
     START_Y = (navBottom + nameTop - cardHeight) / 2 + GAP_BIAS;
   }
 
@@ -152,37 +163,27 @@ function initHeroCard() {
     focusTop = fs ? fs.getBoundingClientRect().top + lenisScrollY : Infinity;
   }
 
-  // ← THE FIX: SCROLL_DISTANCE derived from actual DOM gap, not viewport height
-  function computeScrollDistance() {
-    const fs = document.querySelector('.focus-section');
-    if (!fs) {
-      SCROLL_DISTANCE = window.innerHeight;
-      return;
-    }
-    const fsTop = fs.getBoundingClientRect().top + lenisScrollY;
-    // Card locks 120px before it would overlap the focus section
-    SCROLL_DISTANCE = fsTop - START_Y - heroCard.offsetHeight - 120;
-    // Safety floor so it never goes negative or too short
-    SCROLL_DISTANCE = Math.max(SCROLL_DISTANCE, window.innerHeight * 0.4);
-  }
-
   function setSpacerHeight() {
     if (spacer) spacer.style.height = `${SCROLL_DISTANCE}px`;
   }
 
   function onResize() {
+    SCROLL_DISTANCE = window.innerHeight;
     computeStartY();
-    computeScrollDistance();
     computeFocusTop();
     setSpacerHeight();
-    heroCard.style.top = `${START_Y}px`;
+    if (heroCard.style.position === 'fixed') {
+      heroCard.style.top = `${START_Y}px`;
+    }
   }
 
   window.addEventListener('resize', onResize);
+  window.visualViewport?.addEventListener('resize', onResize);
 
   document.body.appendChild(heroCard);
   computeStartY();
-  computeScrollDistance();
+  computeFocusTop();
+  setSpacerHeight();
 
   heroCard.style.cssText += `
     position: fixed;
@@ -209,12 +210,8 @@ function initHeroCard() {
     heroVisible = e.isIntersecting;
   }).observe(heroCard);
 
-  computeFocusTop();
-  setSpacerHeight();
-
   window.addEventListener('load', () => {
     computeStartY();
-    computeScrollDistance();
     computeFocusTop();
     setSpacerHeight();
     heroCard.style.top = `${START_Y}px`;
@@ -265,7 +262,6 @@ function initHeroCard() {
 
   requestAnimationFrame(animate);
 }
-
 
 // ============================================
 // TEXT REVEALS
@@ -368,7 +364,7 @@ function initClientsSection() {
 // ABOUT GALLERY SCROLL
 // ============================================
 function initAboutGallery() {
-  const track = document.querySelector('.about-gallery-track');
+  const track   = document.querySelector('.about-gallery-track');
   const section = document.querySelector('.about-gallery-section');
   if (!track || !section) return;
 
@@ -444,7 +440,7 @@ function initEntrySequence() {
   });
 
   const letters = document.querySelectorAll('.about-letter span');
-  const img = document.querySelector('.about-placeholder');
+  const img     = document.querySelector('.about-placeholder');
 
   letters.forEach((letter, i) => {
     setTimeout(() => letter.classList.add('visible'), i * 100);
@@ -462,7 +458,6 @@ function initHobbies() {
   const hobbyItems   = document.querySelectorAll('.hobby-item');
   const hobbyCards   = document.querySelectorAll('.hobby-card');
   const captionSlots = document.querySelectorAll('.caption-slot');
-
   if (!hobbyItems.length) return;
 
   function activateCaption(slot) {
@@ -512,9 +507,7 @@ function initStack() {
     .map(line => `<div style="overflow:hidden"><span class="stack-title-inner">${line}</span></div>`)
     .join('');
 
-  const stackInners = document.querySelectorAll('.stack-label-inner, .stack-title-inner');
-
-  gsap.to(stackInners, {
+  gsap.to(document.querySelectorAll('.stack-label-inner, .stack-title-inner'), {
     scrollTrigger: {
       trigger: '.stack-header',
       start: 'top 80%',
@@ -527,11 +520,27 @@ function initStack() {
 }
 
 // ============================================
+// WORKS PAGE HEIGHT
+// ============================================
+function setWorksPageHeight() {
+  const worksPage = document.querySelector('.works-page');
+  const navbar    = document.querySelector('.navbar');
+  if (!worksPage) return;
+  const navHeight = navbar ? navbar.getBoundingClientRect().height : 0;
+  worksPage.style.height = `${window.innerHeight - navHeight}px`;
+}
+
+// ============================================
 // INIT
 // ============================================
 document.addEventListener('DOMContentLoaded', () => {
+  setWorksPageHeight();
+  window.addEventListener('resize', setWorksPageHeight);
+  window.visualViewport?.addEventListener('resize', setWorksPageHeight);
+
   updateTime();
   setInterval(updateTime, 1000);
+
   initHeroCard();
   initTextReveals();
   initFocusSection();
@@ -553,6 +562,7 @@ document.addEventListener('DOMContentLoaded', () => {
 window.addEventListener('load', () => {
   forceTop();
   lenis.scrollTo(0, { immediate: true, force: true });
+  setWorksPageHeight();
 
   requestAnimationFrame(() => {
     forceTop();
@@ -563,3 +573,4 @@ window.addEventListener('load', () => {
     ScrollTrigger.refresh();
   });
 });
+
