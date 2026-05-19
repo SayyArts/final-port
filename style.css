@@ -1070,8 +1070,8 @@ html, body {
 
 /* ─── STACK ─── */
 .stack-section {
-  padding: 0 clamp(16px, 2.78vw, 40px) clamp(60px, 12vw, 180px);
-  margin-bottom: clamp(24px, 8vw, 120px);
+  padding-bottom: 0; /* remove the clamp bottom padding */
+  margin-bottom: 0;  /* kill this too */
 }
 
 .stack-header {
@@ -1189,6 +1189,135 @@ html, body {
 .contact-section {
   margin-bottom: -35px;
 }
+
+/* ─── FOOTER ─── */
+.footer-bottom-left {
+  font-size: clamp(14px, 1.15vw, 28px);
+  color: #000000;
+  margin: 0;
+  line-height: 1.5;
+  font-weight: 480;
+  white-space: nowrap;
+}
+
+.footer-bottom-left p {
+  font-size: clamp(14px, 1.15vw, 28px);
+  color: #000000;
+  margin: 0;
+  line-height: 1.5;
+  font-weight: 480;
+}
+
+.footer-bottom-left p:first-child {
+  font-style: italic;
+}
+
+.footer-nav {
+  grid-column: 2;
+  grid-row: 1;
+  padding-left: clamp(0px, 15vw, 480px);
+}
+
+.footer-label {
+  display: block;
+  font-size: clamp(14px, 1.15vw, 28px);
+  font-weight: 480;
+  color: #000000;
+  margin-bottom: clamp(12px, 1.5vw, 24px);
+  letter-spacing: 0.02em;
+}
+
+.footer-nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.footer-nav ul li a {
+  font-size: clamp(22px, 3.6vw, 92px);
+  font-weight: 600;
+  color: #000000;
+  text-decoration: none;
+  line-height: 1.15;
+  display: inline-block;
+  transition: opacity 0.2s ease;
+}
+
+.footer-bottom-mid {
+  grid-column: 2;
+  grid-row: 2;
+  align-self: end;
+  padding-left: clamp(0px, 15vw, 480px);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  line-height: 160%;
+}
+
+.footer-bottom-mid a {
+  font-size: clamp(14px, 1.15vw, 28px);
+  font-weight: 480;
+  color: #000000;
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+}
+
+.footer-info {
+  grid-column: 3;
+  grid-row: 1;
+  align-self: start;
+  justify-self: start;
+  padding-left: clamp(0px, 8vw, 200px);
+}
+
+.footer-info p {
+  font-size: clamp(14px, 1.15vw, 28px);
+  font-weight: 480;
+  color: #000000;
+  line-height: 1.8;
+  margin: 0;
+}
+
+.footer-bottom-right {
+  grid-column: 3;
+  grid-row: 2;
+  align-self: end;
+  justify-self: start;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  width: 100%;
+  padding-left: clamp(0px, 8vw, 200px);
+}
+
+.back-to-top {
+  background: none;
+  border: none;
+  font-size: clamp(14px, 1.15vw, 28px);
+  font-weight: 480;
+  color: #000000;
+  cursor: pointer;
+  padding: 0;
+  transition: opacity 0.2s ease;
+  font-family: inherit;
+}
+
+.footer-bottom-right span {
+  font-size: clamp(14px, 1.15vw, 28px);
+  font-weight: 480;
+  color: #000000;
+}
+
+.contact-bar--about {
+  margin-bottom: clamp(60px, 8vw, 115px);
+  margin-top: clamp(32px, 4vw, 60px);
+
+}
+
+
 
 /* ─── FOOTER ─── */
 .footer-bottom-left {
