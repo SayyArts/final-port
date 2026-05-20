@@ -13,8 +13,12 @@ forceTop();
 // ============================================
 // VIEWPORT HEIGHT UTILITY
 // ============================================
+function getViewH() {
+  return window.visualViewport ? window.visualViewport.height : window.innerHeight;
+}
+
 function setVH() {
-  const vh = window.innerHeight * 0.01;
+  const vh = getViewH() * 0.01;
   document.documentElement.style.setProperty('--vh', `${vh}px`);
 }
 setVH();
@@ -145,14 +149,14 @@ function initHeroCard() {
   if (!heroCard) return;
 
   let START_Y           = 0;
-  let SCROLL_DISTANCE   = window.innerHeight;
+  let SCROLL_DISTANCE   = getViewH();
   let focusTop          = Infinity;
   const MAX_SCALE_DELTA = 2.64;
   const MAX_DRIFT_Y     = -30;
 
   function computeStartY() {
     const navBottom  = navbar   ? navbar.getBoundingClientRect().bottom  : 0;
-    const nameTop    = heroName ? heroName.getBoundingClientRect().top   : window.innerHeight * 0.5;
+    const nameTop    = heroName ? heroName.getBoundingClientRect().top   : getViewH() * 0.5;
     const cardHeight = heroCard.offsetHeight;
     const GAP_BIAS   = -5;
     START_Y = (navBottom + nameTop - cardHeight) / 2 + GAP_BIAS;
@@ -164,11 +168,16 @@ function initHeroCard() {
   }
 
   function setSpacerHeight() {
-    if (spacer) spacer.style.height = `${SCROLL_DISTANCE}px`;
+    if (!spacer) return;
+    const viewH = getViewH();
+    // shorter screens (e.g. Windows with top+bottom bars) get extra spacer
+    // so the next section never overlaps the card mid-animation
+    const extra = Math.max(0, 900 - viewH);
+    spacer.style.height = `${SCROLL_DISTANCE + extra}px`;
   }
 
   function onResize() {
-    SCROLL_DISTANCE = window.innerHeight;
+    SCROLL_DISTANCE = getViewH();
     computeStartY();
     computeFocusTop();
     setSpacerHeight();
@@ -527,7 +536,8 @@ function setWorksPageHeight() {
   const navbar    = document.querySelector('.navbar');
   if (!worksPage) return;
   const navHeight = navbar ? navbar.getBoundingClientRect().height : 0;
-  worksPage.style.height = `${window.innerHeight - navHeight}px`;
+  const viewH     = getViewH();
+  worksPage.style.height = `${viewH - navHeight}px`;
 }
 
 // ============================================
@@ -573,4 +583,5 @@ window.addEventListener('load', () => {
     ScrollTrigger.refresh();
   });
 });
+
 
