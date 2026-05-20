@@ -11,21 +11,6 @@ const forceTop = () => {
 forceTop();
 
 // ============================================
-// VIEWPORT HEIGHT UTILITY
-// ============================================
-function getViewH() {
-  return window.visualViewport ? window.visualViewport.height : window.innerHeight;
-}
-
-function setVH() {
-  const vh = getViewH() * 0.01;
-  document.documentElement.style.setProperty('--vh', `${vh}px`);
-}
-setVH();
-window.addEventListener('resize', setVH);
-window.visualViewport?.addEventListener('resize', setVH);
-
-// ============================================
 // GSAP + LENIS
 // ============================================
 gsap.registerPlugin(ScrollTrigger);
@@ -172,20 +157,9 @@ function initHeroCard() {
   }
 
   function computeScrollDistance() {
-    const vw = window.innerWidth;
-    const vh = window.innerHeight;
-    const ratio = vw / vh;
+  SCROLL_DISTANCE = window.innerHeight * 0.8;
+}
 
-    // 16:9 or wider = 1.2 pages, 16:10 = 1.0 pages, interpolate between
-    // ratio >= 1.78 (16:9) → 1.2vh, ratio <= 1.6 (16:10) → 1.0vh
-    const pageMult = ratio >= 1.78
-      ? 1.2
-      : ratio <= 1.6
-      ? 1.0
-      : 1.0 + ((ratio - 1.6) / (1.78 - 1.6)) * 0.2;
-
-    SCROLL_DISTANCE = vh * pageMult;
-  }
 
   function setSpacerHeight() {
     if (!spacer) return;
@@ -412,7 +386,6 @@ function initGalleryPara() {
   const para = document.querySelector('.gallery-para-text');
   if (!para || para.dataset.split === 'true') return;
   para.dataset.split = 'true';
-
   requestAnimationFrame(() => {
     splitTextToLines(para, 210, 170);
     observeAndReveal(para, 0.2, 100);
@@ -423,25 +396,25 @@ function initGalleryPara() {
 // ENTRY SEQUENCE
 // ============================================
 function initEntrySequence() {
-  const navTime       = document.getElementById('live-time');
-  const navItems      = document.querySelectorAll('.nav-item');
-  const navCta        = document.querySelector('.nav-cta');
-  const heroName      = document.querySelector('.hero-name .approach-line');
-  const heroBioLines  = document.querySelectorAll('.hero-bio .approach-line');
-  const heroScroll    = document.querySelector('.hero-scroll');
-  const aboutMyself   = document.querySelector('.about-bottom-bar .approach-line-wrapper:first-child .approach-line');
-  const keepScrolling = document.querySelector('.about-bottom-bar .approach-line-wrapper:last-child .approach-line');
+  const navTime      = document.getElementById('live-time');
+  const navItems     = document.querySelectorAll('.nav-item');
+  const navCta       = document.querySelector('.nav-cta');
+  const heroName     = document.querySelector('.hero-name .approach-line');
+  const heroBioLines = document.querySelectorAll('.hero-bio .approach-line');
+  const heroScroll   = document.querySelector('.hero-scroll');
+  const aboutMyself  = document.querySelector('.about-bottom-bar .approach-line-wrapper:first-child .approach-line');
+  const keepScrolling= document.querySelector('.about-bottom-bar .approach-line-wrapper:last-child .approach-line');
 
   [
-    { el: heroName,      delay: 50  },
-    { el: navTime,       delay: 200 },
-    { el: navItems[0],   delay: 250 },
-    { el: navItems[1],   delay: 350 },
-    { el: navItems[2],   delay: 450 },
-    { el: navItems[3],   delay: 550 },
-    { el: navCta,        delay: 650 },
-    { el: heroScroll,    delay: 850 },
-    { el: aboutMyself,   delay: 200 },
+    { el: heroName,    delay: 50  },
+    { el: navTime,     delay: 200 },
+    { el: navItems[0], delay: 250 },
+    { el: navItems[1], delay: 350 },
+    { el: navItems[2], delay: 450 },
+    { el: navItems[3], delay: 550 },
+    { el: navCta,      delay: 650 },
+    { el: heroScroll,  delay: 850 },
+    { el: aboutMyself, delay: 200 },
     { el: keepScrolling, delay: 850 },
   ].forEach(({ el, delay }) => {
     if (!el) return;
@@ -453,7 +426,7 @@ function initEntrySequence() {
   });
 
   const letters = document.querySelectorAll('.about-letter span');
-  const img     = document.querySelector('.about-placeholder');
+  const img = document.querySelector('.about-placeholder');
 
   letters.forEach((letter, i) => {
     setTimeout(() => letter.classList.add('visible'), i * 100);
@@ -533,28 +506,11 @@ function initStack() {
 }
 
 // ============================================
-// WORKS PAGE HEIGHT
-// ============================================
-function setWorksPageHeight() {
-  const worksPage = document.querySelector('.works-page');
-  const navbar    = document.querySelector('.navbar');
-  if (!worksPage) return;
-  const navHeight = navbar ? navbar.getBoundingClientRect().height : 0;
-  const viewH     = getViewH();
-  worksPage.style.height = `${viewH - navHeight}px`;
-}
-
-// ============================================
 // INIT
 // ============================================
 document.addEventListener('DOMContentLoaded', () => {
-  setWorksPageHeight();
-  window.addEventListener('resize', setWorksPageHeight);
-  window.visualViewport?.addEventListener('resize', setWorksPageHeight);
-
   updateTime();
   setInterval(updateTime, 1000);
-
   initHeroCard();
   initTextReveals();
   initFocusSection();
@@ -576,7 +532,6 @@ document.addEventListener('DOMContentLoaded', () => {
 window.addEventListener('load', () => {
   forceTop();
   lenis.scrollTo(0, { immediate: true, force: true });
-  setWorksPageHeight();
 
   requestAnimationFrame(() => {
     forceTop();
