@@ -157,14 +157,29 @@ function initHeroCard() {
   }
 
   function computeScrollDistance() {
-  SCROLL_DISTANCE = window.innerHeight * 0.8;
-}
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const ratio = vw / vh;
 
+    // 16:9 or wider = 1.2 pages, 16:10 = 1.0 pages, interpolate between
+    // ratio >= 1.78 (16:9) → 1.2vh, ratio <= 1.6 (16:10) → 1.0vh
+    const pageMult = ratio >= 1.78
+      ? 1.2
+      : ratio <= 1.6
+      ? 1.0
+      : 1.0 + ((ratio - 1.6) / (1.78 - 1.6)) * 0.2;
+
+    SCROLL_DISTANCE = vh * pageMult;
+  }
 
   function setSpacerHeight() {
-    if (!spacer) return;
-    spacer.style.height = `${SCROLL_DISTANCE}px`;
-  }
+  if (!spacer) return;
+  const ratio = window.innerWidth / window.innerHeight;
+  const extraGap = ratio >= 1.6
+    ? window.innerHeight * 0.1
+    : window.innerHeight * 0.35;
+  spacer.style.height = `${SCROLL_DISTANCE + extraGap}px`;
+}
 
   function recalcAll() {
     computeStartY();
@@ -542,5 +557,6 @@ window.addEventListener('load', () => {
     ScrollTrigger.refresh();
   });
 });
+
 
 
