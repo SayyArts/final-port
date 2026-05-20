@@ -148,50 +148,61 @@ function initHeroCard() {
   const heroName = document.querySelector('.hero-name');
   if (!heroCard) return;
 
-  let START_Y           = 0;
-  let SCROLL_DISTANCE   = 0;
-  const MAX_SCALE_DELTA = 2.64;
-  const MAX_DRIFT_Y     = -30;
+  const MAX_SCALE_DELTA  = 2.64;
+  const MAX_DRIFT_Y      = -30;
+  const GAP_BIAS         = -5;
+
+  let START_Y          = 0;
+  let SCROLL_DISTANCE  = 0;
+  let lockedAbsoluteTop = null;
+  let mouseX           = window.innerWidth / 2;
+  let currentOffsetX   = 0;
+  let revealProgress   = 0;
+  let revealStart      = null;
+  const REVEAL_DELAY   = 100;
+  const REVEAL_DURATION = 700;
+
+  document.body.appendChild(heroCard);
 
   function computeStartY() {
     const navBottom  = navbar   ? navbar.getBoundingClientRect().bottom : 0;
-    const nameTop    = heroName ? heroName.getBoundingClientRect().top  : getViewH() * 0.5;
+    const nameTop    = heroName ? heroName.getBoundingClientRect().top  : window.innerHeight * 0.5;
     const cardHeight = heroCard.offsetHeight;
-    START_Y = (navBottom + nameTop - cardHeight) / 2 - 5;
+    START_Y = (navBottom + nameTop - cardHeight) / 2 + GAP_BIAS;
   }
 
   function computeScrollDistance() {
-    // use actual spacer height so it matches regardless of screen size
-    SCROLL_DISTANCE = spacer ? spacer.offsetHeight : getViewH();
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const ratio = vw / vh;
+
+    // 16:9 or wider = 1.2 pages, 16:10 = 1.0 pages, interpolate between
+    // ratio >= 1.78 (16:9) → 1.2vh, ratio <= 1.6 (16:10) → 1.0vh
+    const pageMult = ratio >= 1.78
+      ? 1.2
+      : ratio <= 1.6
+      ? 1.0
+      : 1.0 + ((ratio - 1.6) / (1.78 - 1.6)) * 0.2;
+
+    SCROLL_DISTANCE = vh * pageMult;
   }
 
   function setSpacerHeight() {
     if (!spacer) return;
-    const viewH = getViewH();
-    const extra = Math.max(0, 900 - viewH);
-    spacer.style.height = `${viewH + extra}px`;
-    computeScrollDistance();
+    spacer.style.height = `${SCROLL_DISTANCE}px`;
   }
 
-  function onResize() {
+  function recalcAll() {
     computeStartY();
+    computeScrollDistance();
     setSpacerHeight();
-    if (heroCard.style.position === 'fixed') {
-      heroCard.style.top = `${START_Y}px`;
-    }
+    heroCard.style.top = `${START_Y}px`;
   }
-
-  window.addEventListener('resize', onResize);
-  window.visualViewport?.addEventListener('resize', onResize);
-
-  document.body.appendChild(heroCard);
-  computeStartY();
-  setSpacerHeight();
 
   heroCard.style.cssText += `
     position: fixed;
     left: 50%;
-    top: ${START_Y}px;
+    top: 0px;
     z-index: 5;
     transform-origin: center top;
     transform: translateX(-50%) scale(1);
@@ -200,60 +211,65 @@ function initHeroCard() {
     -webkit-clip-path: inset(100% 0% 0% 0%);
   `;
 
-  let mouseX            = window.innerWidth / 2;
-  let currentOffsetX    = 0;
-  let lockedAbsoluteTop = null;
-  let revealProgress    = 0;
-  let revealStart       = null;
-  const REVEAL_DELAY    = 100;
-  const REVEAL_DURATION = 700;
+  recalcAll();
 
-  window.addEventListener('load', () => {
-    computeStartY();
-    setSpacerHeight();
-    heroCard.style.top = `${START_Y}px`;
+  let resizeTimer;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      lockedAbsoluteTop = null;
+      heroCard.style.position = 'fixed';
+      recalcAll();
+    }, 100);
   });
 
   document.addEventListener('mousemove', (e) => { mouseX = e.clientX; });
 
   function animate(now) {
+    requestAnimationFrame(animate);
+
+    // Reveal clip
     if (revealStart === null) revealStart = now;
     const elapsed = now - revealStart - REVEAL_DELAY;
     if (elapsed > 0) revealProgress = Math.min(elapsed / REVEAL_DURATION, 1);
     const easedReveal = 1 - Math.pow(1 - revealProgress, 4);
-
-    const progress = Math.min(lenisScrollY / SCROLL_DISTANCE, 1);
-    const scale    = 1 + progress * MAX_SCALE_DELTA;
-    const topY     = START_Y + progress * MAX_DRIFT_Y;
-    const pull     = Math.pow(progress, 3);
-    const centerX  = window.innerWidth / 2;
-
-    const targetOffX = (mouseX - centerX) * 0.7 * (1 - pull);
-    currentOffsetX  += (targetOffX - currentOffsetX) * 0.05;
-
     const maskTop = (1 - easedReveal) * 100;
     const clip = `inset(${maskTop}% 0% 0% 0%)`;
-    heroCard.style.clipPath       = clip;
+    heroCard.style.clipPath = clip;
     heroCard.style.webkitClipPath = clip;
 
-    // when fully scrolled — lock to absolute so page flow is correct
+    // Scroll progress 0→1
+    const progress = SCROLL_DISTANCE > 0
+      ? Math.min(lenisScrollY / SCROLL_DISTANCE, 1)
+      : 0;
+
+    const scale = 1 + progress * MAX_SCALE_DELTA;
+    const topY  = START_Y + progress * MAX_DRIFT_Y;
+
+    // Mouse drift fades out as scroll progresses
+    const pull = Math.pow(progress, 3);
+    const centerX = window.innerWidth / 2;
+    const targetX = (mouseX - centerX) * 0.7 * (1 - pull);
+    currentOffsetX += (targetX - currentOffsetX) * 0.05;
+
+    // NO fade — card stays fully visible, next section scrolls over it
+    heroCard.style.opacity = '1';
+    heroCard.style.pointerEvents = '';
+
+    // Lock to absolute when scroll finishes
     if (progress >= 1) {
       if (lockedAbsoluteTop === null) {
         lockedAbsoluteTop = heroCard.getBoundingClientRect().top + lenisScrollY;
       }
       heroCard.style.position = 'absolute';
-      heroCard.style.top      = `${lockedAbsoluteTop}px`;
+      heroCard.style.top = `${lockedAbsoluteTop}px`;
     } else {
-      // scrolling back up — release lock, go back to fixed + animate reverse
-      lockedAbsoluteTop       = null;
+      lockedAbsoluteTop = null;
       heroCard.style.position = 'fixed';
-      heroCard.style.top      = `${topY}px`;
+      heroCard.style.top = `${topY}px`;
     }
 
-    heroCard.style.opacity   = '1'; // always visible, no fade
     heroCard.style.transform = `translateX(calc(-50% + ${currentOffsetX}px)) scale(${scale})`;
-
-    requestAnimationFrame(animate);
   }
 
   requestAnimationFrame(animate);
