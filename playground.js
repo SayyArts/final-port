@@ -14,7 +14,7 @@
     { name: '2D Animation' },
     { name: '3D Typography' },
     { name: 'Brand System' },
-    { name: 'UI Experiments' },
+    { name: 'Graphic Standarts' },
     { name: 'Color Theory' },
     { name: 'Poster Series' },
     { name: 'Generative Art' },
